@@ -1,16 +1,17 @@
 <template>
   <div class="app">
-    <p>app</p>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
 export default {
-  name:'app',
 
 }
 </script>
 
-<style>
-
+<style lang="less" >
+.app {
+  height: 100%;
+}
 </style>
