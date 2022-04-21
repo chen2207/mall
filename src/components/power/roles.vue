@@ -223,7 +223,7 @@ export default {
             num++
         })
         if(num>0)
-         return this.$message.error('改名称已经存在!')
+         return this.$message.error('该名称已经存在!')
 
 
       this.$message.success("添加角色成功！")
@@ -271,7 +271,7 @@ export default {
             num++
         })
         if(num>1)
-         return this.$message.error('改名称已经存在!')
+         return this.$message.error('该名称已经存在!')
         this.$message.success('修改用户信息成功！')
         console.log(res);
         this.getRolesList()
