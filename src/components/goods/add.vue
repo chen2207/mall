@@ -219,11 +219,12 @@ export default {
         this.onlyTableData.forEach(item=>{
           const newInfo={
             attr_id:item.attr_id,
-            attr_value:item.attr_vals.join(' ')
+            attr_value:item.attr_vals
           }
           this.addForm.attrs.push(newInfo)
         })
         form.attrs=this.addForm.attrs
+        console.log(form.attrs);
         // 发起添加请求
         const{data:res}=await this.$http.post('goods',form)
         if(res.meta.status!==201)return this.$message.error('添加失败！')

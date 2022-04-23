@@ -33,7 +33,7 @@
       </el-table-column>
       <el-table-column label="操作" width="130px">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" size="mini"></el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="showedit(scope.row)"></el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeById(scope.row.goods_id)"></el-button>
         </template>
       </el-table-column>
@@ -50,6 +50,30 @@
       :total="total" background>
     </el-pagination>
     </el-card>
+    <!-- 编辑功能 -->
+    <el-dialog
+      title="修改商品"
+      :visible.sync="editDialogVisible"
+      width="50%">
+      <el-form :model="editForm" :rules="EditRules" ref="EditRef" label-width="100px">
+        <el-form-item label="商品名称" prop="goods_name">
+          <el-input v-model="editForm.goods_name"></el-input>
+        </el-form-item>
+        <el-form-item label="商品价格" prop="goods_price">
+          <el-input v-model="editForm.goods_price"></el-input>
+        </el-form-item>
+        <el-form-item label="商品数量" prop="goods_number">
+          <el-input v-model="editForm.goods_number"></el-input>
+        </el-form-item>
+        <el-form-item label="商品重量" prop="goods_weight">
+          <el-input v-model="editForm.goods_weight"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editconfirm()">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -66,6 +90,21 @@ export default {
       // 商品列表
       goodslist:[],
       total:0,
+      editDialogVisible:false,
+      editForm:{
+        goods_name:'',
+        goods_price:0,
+        goods_number:0,
+        goods_weight:0,
+        goods_cat:"1,2,3"
+      },
+      EditRules:{
+        goods_name:[{required:true,message:'请输入商品名称！',trigger:'blur'}],
+        goods_price:[{required:true,message:'请输入商品名称！',trigger:'blur'}],
+        goods_number:[{required:true,message:'请输入商品名称！',trigger:'blur'}],
+        goods_weight:[{required:true,message:'请输入商品名称！',trigger:'blur'}],
+      },
+      editId:0,
     }
   },
   methods:{
@@ -73,7 +112,6 @@ export default {
       const{data:res}=await this.$http.get('goods',{params:this.queryInfo} )
       if(res.meta.status!==200)return this.$message.error('获取商品列表失败！')
       this.$message.success('获取商品列表成功')
-      // console.log(res.data);
       this.goodslist=res.data.goods
       this.total=res.data.total
     },
@@ -103,6 +141,22 @@ export default {
     },
     goAddPage(){
       this.$router.push('/goods/add')
+    },
+    showedit(goods){
+      this.editForm.goods_name=goods.goods_name
+      this.editForm.goods_price=goods.goods_price
+      this.editForm.goods_number=goods.goods_number
+      this.editForm.goods_weight=goods.goods_weight
+      // this.editForm.goods_cat=goods.goods_cat
+      this.editId=goods.goods_id
+      this.editDialogVisible=true
+    },
+    async editconfirm(){
+      const{data:res}=await this.$http.put(`goods/${this.editId}`,this.editForm)
+      if(res.meta.status!==200)return this.$message.error('编辑商品失败！')
+      this.$message.success('编辑商品成功！')
+      this.getGoodsList()
+      this.editDialogVisible=false
     }
   },
   created(){
